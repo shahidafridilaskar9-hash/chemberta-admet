@@ -1,0 +1,50 @@
+{
+  "bbbp_p_np": {
+    "task": "classification",
+    "n_test": 205,
+    "RF": {
+      "ROC_AUC": 0.6899,
+      "PR_AUC": 0.7099
+    },
+    "XGBoost": {
+      "ROC_AUC": 0.6568,
+      "PR_AUC": 0.6821
+    }
+  },
+  "esol_measured log solubility in mols per litre": {
+    "task": "regression",
+    "n_test": 114,
+    "RF": {
+      "RMSE": 1.6436,
+      "R2": 0.3959
+    },
+    "XGBoost": {
+      "RMSE": 1.6818,
+      "R2": 0.3675
+    }
+  },
+  "lipophilicity_exp": {
+    "task": "regression",
+    "n_test": 420,
+    "RF": {
+      "RMSE": 0.8838,
+      "R2": 0.3591
+    },
+    "XGBoost": {
+      "RMSE": 0.8789,
+      "R2": 0.3662
+    }
+  },
+  "clintox_CT_TOX": {
+    "task": "classification",
+    "n_test": 148,
+    "RF": {
+      "ROC_AUC": 0.6783,
+      "PR_AUC": 0.3374
+    },
+    "XGBoost": {
+      "ROC_AUC": 0.8848,
+      "PR_AUC": 0.5466
+    }
+  }
+}

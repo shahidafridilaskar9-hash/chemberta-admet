@@ -78,11 +78,14 @@ chemberta-admet/
 │   └── 05_results_analysis.ipynb       # Benchmark comparison + figures
 ├── src/
 │   ├── __init__.py
-│   ├── data_utils.py       # Dataset loading, SMILES cleaning, splitting
+│   ├── download_data.py    # Direct MoleculeNet download (no DeepChem)
+│   ├── splitters.py        # Bemis-Murcko scaffold splitting
+│   ├── data_utils.py       # SMILES cleaning, ECFP4, Lipinski filter
 │   ├── models.py           # ChemBERTa model + task heads
 │   ├── train.py            # Training loop with early stopping
 │   ├── evaluate.py         # Metrics, calibration, visualisation
 │   └── predict.py          # Single-compound inference
+├── run_baselines.py        # Week 1 deliverable: ECFP4 baselines
 ├── data/
 │   └── .gitkeep
 ├── results/
@@ -96,12 +99,32 @@ chemberta-admet/
 ## Current Status
 
 - [x] Repository structure and documentation
-- [x] Data loading pipeline (MoleculeNet via DeepChem)
-- [x] ECFP4 fingerprint baseline (BBBP, ESOL)
-- [ ] ChemBERTa single-task fine-tuning (in progress)
+- [x] Data loading pipeline (direct MoleculeNet download, no DeepChem dependency)
+- [x] Scaffold splitting (Bemis-Murcko) for realistic generalisation tests
+- [x] ECFP4 fingerprint baselines (BBBP, ESOL, Lipophilicity, ClinTox)
+- [ ] ChemBERTa single-task fine-tuning (next: run on GPU)
+- [ ] Conformal prediction layer for uncertainty-aware screening
 - [ ] Multi-task head architecture
-- [ ] Full benchmark comparison
 - [ ] HuggingFace Spaces deployment
+
+## Baseline Results (ECFP4 + scaffold split)
+
+Reproducible via `python run_baselines.py`. Scaffold splitting makes these
+deliberately challenging (test set contains unseen scaffolds).
+
+| Dataset | Task | Model | ROC-AUC | PR-AUC | RMSE | R² |
+|---|---|---|---|---|---|---|
+| BBBP | Classification | RF | 0.690 | 0.710 | – | – |
+| BBBP | Classification | XGBoost | 0.657 | 0.682 | – | – |
+| ClinTox | Classification | RF | 0.678 | 0.337 | – | – |
+| ClinTox | Classification | XGBoost | **0.885** | **0.547** | – | – |
+| ESOL | Regression | RF | – | – | **1.644** | 0.396 |
+| Lipophilicity | Regression | XGBoost | – | – | **0.879** | 0.366 |
+
+These are the performance bars ChemBERTa must beat. The next step is
+transformer fine-tuning, followed by a **conformal prediction layer** that
+adds statistically guaranteed uncertainty estimates — turning point
+predictions into trustworthy prediction sets for compound prioritisation.
 
 ---
 
@@ -110,8 +133,16 @@ chemberta-admet/
 ```bash
 git clone https://github.com/shahidafridilaskar9-hash/chemberta-admet
 cd chemberta-admet
-pip install -r requirements.txt
-jupyter notebook notebooks/01_data_exploration.ipynb
+
+# Core dependencies (Python 3.9–3.13)
+pip install rdkit scikit-learn pandas numpy matplotlib seaborn requests xgboost
+
+# Run the ECFP4 baselines (downloads data automatically)
+python run_baselines.py
+
+# For ChemBERTa fine-tuning (notebook 03), also install:
+pip install torch transformers
+# GPU recommended — Google Colab free tier works well
 ```
 
 ---
